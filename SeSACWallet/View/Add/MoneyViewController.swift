@@ -25,7 +25,6 @@ class MoneyViewController: BaseViewController {
     // MARK: viewWillDisappear vs viewDidDisappear의 UX적인 차이
     // 화면이 바뀌기도 전에 데이터가 먼저 바뀌어있을 때의 혼란의 가능성이 있다면 did!
     // 상황별로 더 자연스러운 방향이 있음
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         

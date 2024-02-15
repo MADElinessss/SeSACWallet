@@ -5,6 +5,7 @@
 //  Created by Madeline on 2/14/24.
 //
 
+import RealmSwift
 import SnapKit
 import UIKit
 
@@ -67,6 +68,9 @@ class AddViewController: BaseViewController {
     override func configureView() {
         super.configureView()
         
+        // MARK: 🐶 Realm 데이터베이스 실습
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "저장", style: .plain, target: self, action: #selector(saveButtonTapped))
+        
         moneyButton.setTitle("금액", for: .normal)
         moneyButton.setTitleColor(.white, for: .normal)
         moneyButton.backgroundColor = .orange
@@ -81,6 +85,25 @@ class AddViewController: BaseViewController {
         memoButton.setTitleColor(.white, for: .normal)
         memoButton.backgroundColor = .systemOrange
         memoButton.addTarget(self, action: #selector(memoButtonTapped), for: .touchUpInside)
+    }
+    
+    // MARK: 🐶 Realm 데이터베이스 실습
+    @objc func saveButtonTapped() {
+        
+        // Realm에 Record 추가하기: CREATE
+        // 1. Realm을 찾는다!
+        let realm = try! Realm()
+        
+        print(realm.configuration.fileURL)
+        
+        // 2. Record에 Create될 내용을 구성한다!
+        let data = AccountBookTable(money: 10000, category: "coffee", memo: nil, registerationDate: Date(), usageDate: Date(), isDeposit: false)
+        
+        // 3. 레코드를 Realm에 추가한다!
+        try! realm.write {
+            realm.add(data)
+            print("REALM CREATED")
+        }
     }
 
     @objc func moneyButtonTapped() {
