@@ -26,6 +26,7 @@
 		C1BC99A52B7DAAAE0083E181 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C1BC99A42B7DAAAE0083E181 /* Realm */; };
 		C1BC99A72B7DAAAE0083E181 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C1BC99A62B7DAAAE0083E181 /* RealmSwift */; };
 		C1BC99AB2B7DAC860083E181 /* RealmModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BC99AA2B7DAC860083E181 /* RealmModel.swift */; };
+		C1BC99CC2B7EF4970083E181 /* AccountBookTableRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BC99CB2B7EF4970083E181 /* AccountBookTableRepository.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 		C1BC99632B7C62B20083E181 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 		C1BC99652B7C68440083E181 /* MemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoViewController.swift; sourceTree = "<group>"; };
 		C1BC99AA2B7DAC860083E181 /* RealmModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmModel.swift; sourceTree = "<group>"; };
+		C1BC99CB2B7EF4970083E181 /* AccountBookTableRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountBookTableRepository.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				C1BC99AA2B7DAC860083E181 /* RealmModel.swift */,
+				C1BC99CB2B7EF4970083E181 /* AccountBookTableRepository.swift */,
 			);
 			path = Realm;
 			sourceTree = "<group>";
@@ -234,6 +237,7 @@
 				C1BC99642B7C62B20083E181 /* CategoryViewController.swift in Sources */,
 				C1BC99382B7C3F5E0083E181 /* SceneDelegate.swift in Sources */,
 				C1BC99622B7C54850083E181 /* MoneyViewController.swift in Sources */,
+				C1BC99CC2B7EF4970083E181 /* AccountBookTableRepository.swift in Sources */,
 				C1BC99592B7C40890083E181 /* MainViewController.swift in Sources */,
 				C1BC99662B7C68440083E181 /* MemoViewController.swift in Sources */,
 			);

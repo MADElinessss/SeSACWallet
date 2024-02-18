@@ -19,6 +19,8 @@ class AccountBookTable: Object {
     @Persisted var registerationDate: Date // 등록일
     @Persisted var usageDate: Date // 소비 날짜
     @Persisted var isDeposit: Bool // true: 입금 / false: 출금
+    // 컬럼을 추가해보자!
+    @Persisted var isFavorite: Bool
     
     // class initializer
     // convenience: 편의 생성자
@@ -30,5 +32,6 @@ class AccountBookTable: Object {
         self.registerationDate = registerationDate
         self.usageDate = usageDate
         self.isDeposit = isDeposit
+        self.isFavorite = false
     }
 }

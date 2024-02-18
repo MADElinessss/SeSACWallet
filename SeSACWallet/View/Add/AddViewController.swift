@@ -19,6 +19,8 @@ class AddViewController: BaseViewController {
     let moneyButton = UIButton()
     let categoryButton = UIButton()
     let memoButton = UIButton()
+    
+    let repository = AccountBookTableRepository()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,18 +94,26 @@ class AddViewController: BaseViewController {
         
         // Realm에 Record 추가하기: CREATE
         // 1. Realm을 찾는다!
-        let realm = try! Realm()
+//        let realm = try! Realm()
+//        
+//        print(realm.configuration.fileURL)
+//        
+//        // 2. Record에 Create될 내용을 구성한다!
+//        
+        let money = Int.random(in: 100...5000)*10
         
-        print(realm.configuration.fileURL)
+        let data = AccountBookTable(money: money, category: "study", memo: nil, registerationDate: Date(), usageDate: Date(), isDeposit: false)
         
-        // 2. Record에 Create될 내용을 구성한다!
-        let data = AccountBookTable(money: 10000, category: "coffee", memo: nil, registerationDate: Date(), usageDate: Date(), isDeposit: false)
+        repository.createItem(data)
+        
+        
+        
         
         // 3. 레코드를 Realm에 추가한다!
-        try! realm.write {
-            realm.add(data)
-            print("REALM CREATED")
-        }
+//        try! realm.write {
+//            realm.add(data)
+//            print("REALM CREATED")
+//        }
     }
 
     @objc func moneyButtonTapped() {
