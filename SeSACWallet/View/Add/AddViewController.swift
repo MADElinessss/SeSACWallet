@@ -19,6 +19,8 @@ class AddViewController: BaseViewController {
     let moneyButton = UIButton()
     let categoryButton = UIButton()
     let memoButton = UIButton()
+    let photoImageView = UIImageView()
+    let addButton = UIButton()
     
     let repository = AccountBookTableRepository()
 
@@ -42,6 +44,8 @@ class AddViewController: BaseViewController {
         view.addSubview(moneyButton)
         view.addSubview(categoryButton)
         view.addSubview(memoButton)
+        view.addSubview(photoImageView)
+        view.addSubview(addButton)
     }
     
     override func configureConstraints() {
@@ -65,28 +69,60 @@ class AddViewController: BaseViewController {
             make.width.equalTo(300)
             make.height.equalTo(48)
         }
+        
+        photoImageView.snp.makeConstraints { make in
+            make.top.equalTo(memoButton.snp.bottom).offset(44)
+            make.size.equalTo(300)
+            make.centerX.equalTo(view)
+        }
+        
+        addButton.snp.makeConstraints { make in
+            make.top.equalTo(photoImageView.snp.bottom).offset(24)
+            make.width.equalTo(300)
+            make.height.equalTo(48)
+            make.centerX.equalTo(view)
+        }
     }
     
     override func configureView() {
         super.configureView()
         
+        photoImageView.backgroundColor = .orange
+        
+        addButton.setTitle("🖼️ 이미지 추가", for: .normal)
+        addButton.setTitleColor(.white, for: .normal)
+        addButton.backgroundColor = .orange
+        addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
+        
         // MARK: 🐶 Realm 데이터베이스 실습
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "저장", style: .plain, target: self, action: #selector(saveButtonTapped))
         
-        moneyButton.setTitle("금액", for: .normal)
+        moneyButton.setTitle("💸 금액", for: .normal)
         moneyButton.setTitleColor(.white, for: .normal)
         moneyButton.backgroundColor = .orange
         moneyButton.addTarget(self, action: #selector(moneyButtonTapped), for: .touchUpInside)
         
-        categoryButton.setTitle("Category", for: .normal)
+        categoryButton.setTitle("📋 Category", for: .normal)
         categoryButton.setTitleColor(.white, for: .normal)
         categoryButton.backgroundColor = .systemOrange
         categoryButton.addTarget(self, action: #selector(categoryButtonTapped), for: .touchUpInside)
         
-        memoButton.setTitle("MEMO", for: .normal)
+        memoButton.setTitle("📝 MEMO", for: .normal)
         memoButton.setTitleColor(.white, for: .normal)
         memoButton.backgroundColor = .systemOrange
         memoButton.addTarget(self, action: #selector(memoButtonTapped), for: .touchUpInside)
+    }
+    
+    // MARK: 카메라 촬영, 갤러리 접근 기능
+    // UIImagePicker -> PHPickerViewController
+    @objc func addButtonTapped() {
+        let vc = UIImagePickerController()
+        //vc.sourceType = .camera
+        // MARK: 이미지 선택 - delegate & protocol 채택
+        // UIImagePickerControllerDelegate, UINavigationControllerDelegate
+        vc.allowsEditing = true
+        vc.delegate = self
+        present(vc, animated: true)
     }
     
     // MARK: 🐶 Realm 데이터베이스 실습
@@ -153,4 +189,29 @@ extension AddViewController: PassDataDelegate {
     func memoReceived(text: String) {
         memoButton.setTitle(text, for: .normal)
     }
+}
+
+extension AddViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        // 취소했을 때의 로직
+        dismiss(animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        // 이미지 선택했을 때의 로직
+        
+//        if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+//            photoImageView.image = pickedImage
+//        }
+        
+        // 편집한 이미지
+        if let pickedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+            photoImageView.image = pickedImage
+        }
+        
+        
+        dismiss(animated: true)
+    }
+    
 }
