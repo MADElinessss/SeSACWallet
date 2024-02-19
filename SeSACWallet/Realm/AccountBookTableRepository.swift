@@ -32,6 +32,10 @@ final class AccountBookTableRepository {
         }.sorted(byKeyPath: "money", ascending: true)
     }
     
+    func fetch() -> Results<AccountBookTable> {
+        return realm.objects(AccountBookTable.self)
+    }
+    
     // UPDATE
     func updateItem(id: ObjectId, money: Int, category: String) {
         do {

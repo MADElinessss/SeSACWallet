@@ -5,6 +5,7 @@
 //  Created by Madeline on 2/14/24.
 //
 
+import FSCalendar
 import RealmSwift
 import SnapKit
 import UIKit
@@ -12,16 +13,23 @@ import UIKit
 class MainViewController: BaseViewController {
 
     let tableView = UITableView()
+    let calendar = FSCalendar()
     let dataList = ["만두", "터피", "커피"]
     
     var list: Results<AccountBookTable>!
     let repository = AccountBookTableRepository()
     
     let realm = try! Realm()
+    let dateFormat = DateFormatter()
+    
     
     // 얘는 한번만 실행돼
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        dateFormat.dateFormat = "yyyy년 MM월 dd일 hh시"
+        
+        print(realm.configuration.fileURL)
         
         // MARK: Realm 데이터 불러오기
         // 1. Realm 위치에 접근
@@ -47,6 +55,7 @@ class MainViewController: BaseViewController {
 //        }.sorted(byKeyPath: "money", ascending: true)
         
         
+        // list = repository.fetch()
         list = repository.fetchItem("study")
         
     }
@@ -60,16 +69,32 @@ class MainViewController: BaseViewController {
     
     override func configureHierarchy() {
         view.addSubview(tableView)
+        view.addSubview(calendar)
     }
     
     override func configureConstraints() {
+        calendar.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+            make.height.equalTo(500)
+        }
+        
         tableView.snp.makeConstraints { make in
-            make.edges.equalTo(view)
+            make.top.equalTo(calendar.snp.bottom)
+            make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
     override func configureView() {
         super.configureView() // BaseViewController의 내용도 실행해
+        
+        // MARK: FSCalendar
+        calendar.delegate = self
+        calendar.dataSource = self
+        
+        
+        
+        
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -77,8 +102,13 @@ class MainViewController: BaseViewController {
         
         navigationItem.title = "용돈기입장"
         
-        let item = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(rightBarButtonItemTapped))
-        navigationItem.rightBarButtonItem = item
+        let rightitem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(rightBarButtonItemTapped))
+        navigationItem.rightBarButtonItem = rightitem
+        
+        // MARK: 날짜 기준 정렬 버튼
+        let leftitem = UIBarButtonItem(title: "TODAY", style: .plain, target: self, action: #selector(todayBarButtonItemTapped))
+        let allleftitem = UIBarButtonItem(title: "ALL", style: .plain, target: self, action: #selector(allBarButtonItemTapped))
+        navigationItem.leftBarButtonItems = [leftitem, allleftitem]
         
         // MARK: 데이터베이스 필터 기능 추가
         
@@ -89,6 +119,30 @@ class MainViewController: BaseViewController {
         let vc = AddViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
+    
+    @objc func todayBarButtonItemTapped() {
+        // MARK: 오늘 날짜만 필터링해서 데이터 가져오고, -> list에 넣기
+        // Date는 시, 분, 초로 끝나는게 아니라, 001Z 이런거 더 있음
+        // 근데 거기까지 하기 쉽지 않으니까, 캘린더라는 구조체를 사용해서 비교하는게 좋음
+        
+        print(Date())
+        
+        // 오늘 시작 날짜(시간)
+        let start = Calendar.current.startOfDay(for: Date())
+        
+        // 오늘 끝나는 날짜(시간) == 내일 시작 날짜!
+        let end: Date = Calendar.current.date(byAdding: .day, value: 1, to: start) ?? Date()
+        
+        let predicate = NSPredicate(format: "registerationDate >= %@ && registerationDate < %@", start as NSDate, end as NSDate)
+    
+        list = realm.objects(AccountBookTable.self).filter(predicate)
+        
+        tableView.reloadData()
+    }
+
+    @objc func allBarButtonItemTapped() {
+        
+    }
 }
 
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
@@ -98,7 +152,14 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "mainCell")!
-        cell.textLabel?.text = "🥟\(list[indexPath.row].money)원 \(list[indexPath.row].category)"
+        let row = list[indexPath.row]
+        
+        
+        
+        let result = dateFormat.string(from: row.registerationDate)
+        print(row.registerationDate)
+        
+        cell.textLabel?.text = "\(result)🥟\(row.money)원 \(row.category)"
         return cell
     }
     
@@ -141,7 +202,32 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-
-//#Preview {
-//    MainViewController()
-//}
+extension MainViewController: FSCalendarDelegate, FSCalendarDataSource {
+    
+    func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
+        return 1
+    }
+    
+    func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
+        
+        let start = Calendar.current.startOfDay(for: date)//선택한 날짜를 기준으로 시작일
+        
+        let end: Date = Calendar.current.date(byAdding: .day, value: 1, to: start) ?? Date()
+        
+        let predicate = NSPredicate(format: "registerationDate >= %@ && registerationDate < %@", start as NSDate, end as NSDate)
+        
+        list = realm.objects(AccountBookTable.self).filter(predicate)
+        
+        tableView.reloadData()
+    }
+    
+    // 날짜 대신 들어가는 title
+//    func calendar(_ calendar: FSCalendar, titleFor date: Date) -> String? {
+//        return "TITLE💸"
+//    }
+    
+    // 셀에 들어가는 이미지
+//    func calendar(_ calendar: FSCalendar, imageFor date: Date) -> UIImage? {
+//        return UIImage(systemName: "star")
+//    }
+}
