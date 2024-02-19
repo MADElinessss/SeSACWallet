@@ -154,12 +154,18 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "mainCell")!
         let row = list[indexPath.row]
         
-        
-        
         let result = dateFormat.string(from: row.registerationDate)
         print(row.registerationDate)
         
         cell.textLabel?.text = "\(result)🥟\(row.money)원 \(row.category)"
+        
+        
+        // MARK: Document 폴더에 있는 이미지를 셀에 보여주기
+        // Document 위치 찾기 > 경로 완성 > URL 기반으로 조회
+        if let image = loadImageFromDocument(fileName: "\(row.id)") {
+            cell.imageView?.image = image
+        }
+        
         return cell
     }
     

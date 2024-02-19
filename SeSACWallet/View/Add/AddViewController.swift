@@ -141,15 +141,23 @@ class AddViewController: BaseViewController {
         let data = AccountBookTable(money: money, category: "study", memo: nil, registerationDate: Date(), usageDate: Date(), isDeposit: false)
         
         repository.createItem(data)
-        
-        
-        
-        
+
         // 3. 레코드를 Realm에 추가한다!
 //        try! realm.write {
 //            realm.add(data)
 //            print("REALM CREATED")
 //        }
+        
+        // MARK: 이미지 저장
+    
+        // filemanager를 통해 이미지 파일 자체를 Document에 저장
+        // Realm Record에는 파일 명, Document 이미지 경로가 들어가야됨 -> 찾을 수 있게!
+        
+        // 기준을 날짜로 하기도 해. 왜냐면 마이크로 세컨드까지도 저장되서 다 다를거거든
+        // 또 다른 기준으로 PK를 사용하기도 함
+        if let image = photoImageView.image {
+            saveImageToDocument(image: image, fileName: "\(data.id)")
+        }
     }
 
     @objc func moneyButtonTapped() {
