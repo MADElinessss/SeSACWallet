@@ -93,9 +93,6 @@ class MainViewController: BaseViewController {
         calendar.dataSource = self
         
         
-        
-        
-        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "mainCell")
@@ -125,7 +122,7 @@ class MainViewController: BaseViewController {
         // Date는 시, 분, 초로 끝나는게 아니라, 001Z 이런거 더 있음
         // 근데 거기까지 하기 쉽지 않으니까, 캘린더라는 구조체를 사용해서 비교하는게 좋음
         
-        print(Date())
+//        print(Date())
         
         // 오늘 시작 날짜(시간)
         let start = Calendar.current.startOfDay(for: Date())
@@ -211,7 +208,16 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 extension MainViewController: FSCalendarDelegate, FSCalendarDataSource {
     
     func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
-        return 1
+        // TODO: 할 일 개수에 맞게 numberOfEventsFor return
+        
+        let start = Calendar.current.startOfDay(for: date)
+        let end: Date = Calendar.current.date(byAdding: .day, value: 1, to: start) ?? Date()
+        let predicate = NSPredicate(format: "registerationDate >= %@ && registerationDate < %@", start as NSDate, end as NSDate)
+        
+        list = realm.objects(AccountBookTable.self).filter(predicate)
+        tableView.reloadData()
+        let events = min(list.count, 3)
+        return events
     }
     
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
